@@ -7,183 +7,271 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+Pro:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <style>
+        /* Styles for the password prompt */
+        #password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(30, 30, 30, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            font-family: 'Source Serif Pro', serif;
+        }
+
+        .password-prompt {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .password-prompt h2 {
+            margin-top: 0;
+            font-family: 'Playfair Display', serif;
+            font-size: 2em;
+            color: #1a1a1a;
+        }
+
+        .password-prompt p {
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        #password-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        
+        #password-submit {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        #password-submit:hover {
+            background-color: #0056b3;
+        }
+
+        #error-message {
+            color: #d93025;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        
+        /* Utility classes */
+        .hidden {
+            display: none;
+        }
+        .error-hidden {
+            visibility: hidden;
+        }
+    </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="preview-panel" id="previewPanel">
-            <div class="preview-header">
-                <button id="viewToggleBtn" class="btn btn--primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-                    <span class="btn-text">HTML Code</span>
-                </button>
-                <div class="preview-controls">
-                    <button id="zoomOutBtn" class="btn btn--outline btn--icon" aria-label="Zoom Out">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+    <div id="password-overlay">
+        <div class="password-prompt">
+            <h2>Enter Password</h2>
+            <p>Please enter the password to access the content generator.</p>
+            <input type="password" id="password-input" placeholder="Password" autofocus>
+            <button id="password-submit">Unlock</button>
+            <p id="error-message" class="error-hidden">Incorrect Password. Please try again.</p>
+        </div>
+    </div>
+    <div id="main-content" class="hidden">
+        <div class="app-container">
+            <div class="preview-panel" id="previewPanel">
+                <div class="preview-header">
+                    <button id="viewToggleBtn" class="btn btn--primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        <span class="btn-text">HTML Code</span>
                     </button>
-                    <span id="zoomLevel">100%</span>
-                    <button id="zoomInBtn" class="btn btn--outline btn--icon" aria-label="Zoom In">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    </button>
-                    <button id="fullscreenBtn" class="btn btn--outline btn--icon" aria-label="Toggle Fullscreen">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
-                    </button>
+                    <div class="preview-controls">
+                        <button id="zoomOutBtn" class="btn btn--outline btn--icon" aria-label="Zoom Out">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </button>
+                        <span id="zoomLevel">100%</span>
+                        <button id="zoomInBtn" class="btn btn--outline btn--icon" aria-label="Zoom In">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </button>
+                        <button id="fullscreenBtn" class="btn btn--outline btn--icon" aria-label="Toggle Fullscreen">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <div id="livePreview" class="preview-content active">
-                <div class="preview-wrapper" id="previewWrapper">
-                    <div id="scoped-newspaper-post">
-                        <div class="page-wrapper">
-                            <header class="site-header">
-                                <h7>MAGZINE<span class="sanraiz-text">SANRAIZ</span></h7>
-                            </header>
-                            <div class="newspaper-container">
-                                <nav class="sidebar">
-                                    <h2 id="preview-sidebar-header">#01</h2>
-                                    <div class="nav-items-wrapper" id="preview-nav-buttons"></div>
-                                </nav>
-                                <main class="content-area">
-                                    <header class="article-header">
-                                        <h7 class="article-title" id="preview-main-title">Breaking News</h7>
-                                        <p class="article-subtitle" id="preview-main-subtitle">Latest updates and developments</p>
-                                        <div class="article-meta">
-                                            <span id="preview-publish-date">September 9, 2025</span> |
-                                            <span id="preview-author">Staff Reporter</span>
-                                        </div>
-                                    </header>
-                                    <article id="preview-article-body"></article>
-                                </main>
+                <div id="livePreview" class="preview-content active">
+                    <div class="preview-wrapper" id="previewWrapper">
+                        <div id="scoped-newspaper-post">
+                            <div class="page-wrapper">
+                                <header class="site-header">
+                                    <h7>MAGZINE<span class="sanraiz-text">SANRAIZ</span></h7>
+                                </header>
+                                <div class="newspaper-container">
+                                    <nav class="sidebar">
+                                        <h2 id="preview-sidebar-header">#01</h2>
+                                        <div class="nav-items-wrapper" id="preview-nav-buttons"></div>
+                                    </nav>
+                                    <main class="content-area">
+                                        <header class="article-header">
+                                            <h7 class="article-title" id="preview-main-title">Breaking News</h7>
+                                            <p class="article-subtitle" id="preview-main-subtitle">Latest updates and developments</p>
+                                            <div class="article-meta">
+                                                <span id="preview-publish-date">September 9, 2025</span> |
+                                                <span id="preview-author">Staff Reporter</span>
+                                            </div>
+                                        </header>
+                                        <article id="preview-article-body"></article>
+                                    </main>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <div id="htmlCodeView" class="code-content">
+                    <pre><code id="htmlCode" class="language-html"></code></pre>
+                </div>
             </div>
 
-            <div id="htmlCodeView" class="code-content">
-                <pre><code id="htmlCode" class="language-html"></code></pre>
+            <div class="resizer" id="resizer" title="Resize panels"></div>
+
+            <div class="editor-panel" id="editorPanel">
+                <div class="editor-header">
+                    <h2>Content Editor</h2>
+                    <div class="editor-stats">
+                        <span id="sectionCount">8 sections</span>
+                        <span id="wordCount">0 words</span>
+                    </div>
+                </div>
+
+                <div class="editor-content">
+                    <div class="settings-section collapsible">
+                        <header class="settings-header" id="settingsHeader" title="Click to toggle settings">
+                            <h3>Publication Settings</h3>
+                            <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </header>
+                        <div class="settings-content">
+                            <div class="form-group">
+                                <label class="form-label" for="sidebarHeader">Sidebar Header</label>
+                                <input type="text" id="sidebarHeader" class="form-control" value="#01" placeholder="e.g., #01, Issue 1">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="publishDate">Publication Date</label>
+                                <input type="text" id="publishDate" class="form-control" value="September 10, 2025">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="author">Author</label>
+                                <input type="text" id="author" class="form-control" value="Staff Reporter">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sections-container">
+                        <div class="sections-header">
+                            <h3>Sections</h3>
+                            <button id="addSectionBtn" class="btn btn--primary btn--sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                <span class="btn-text">Add Section</span>
+                            </button>
+                        </div>
+                        <div id="sectionsList" class="sections-list"></div>
+                    </div>
+
+                    <div class="export-actions">
+                        <h3>Export HTML</h3>
+                        <div class="export-buttons">
+                            <button id="copyHtmlBtn" class="btn btn--secondary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                <span class="btn-text">Copy HTML</span>
+                            </button>
+                            <button id="downloadHtmlBtn" class="btn btn--primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                <span class="btn-text">Download HTML</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="resizer" id="resizer" title="Resize panels"></div>
-
-        <div class="editor-panel" id="editorPanel">
-            <div class="editor-header">
-                <h2>Content Editor</h2>
-                <div class="editor-stats">
-                    <span id="sectionCount">8 sections</span>
-                    <span id="wordCount">0 words</span>
-                </div>
-            </div>
-
-            <div class="editor-content">
-                <div class="settings-section collapsible">
-                    <header class="settings-header" id="settingsHeader" title="Click to toggle settings">
-                        <h3>Publication Settings</h3>
-                        <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                    </header>
-                    <div class="settings-content">
-                        <div class="form-group">
-                            <label class="form-label" for="sidebarHeader">Sidebar Header</label>
-                            <input type="text" id="sidebarHeader" class="form-control" value="#01" placeholder="e.g., #01, Issue 1">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="publishDate">Publication Date</label>
-                            <input type="text" id="publishDate" class="form-control" value="September 9, 2025">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="author">Author</label>
-                            <input type="text" id="author" class="form-control" value="Staff Reporter">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="sections-container">
-                    <div class="sections-header">
-                        <h3>Sections</h3>
-                        <button id="addSectionBtn" class="btn btn--primary btn--sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                            <span class="btn-text">Add Section</span>
-                        </button>
-                    </div>
-                    <div id="sectionsList" class="sections-list"></div>
-                </div>
-
-                <div class="export-actions">
-                    <h3>Export HTML</h3>
-                    <div class="export-buttons">
-                        <button id="copyHtmlBtn" class="btn btn--secondary">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                            <span class="btn-text">Copy HTML</span>
-                        </button>
-                        <button id="downloadHtmlBtn" class="btn btn--primary">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                            <span class="btn-text">Download HTML</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <div id="toast" class="toast hidden">
+            <span id="toastMessage"></span>
         </div>
-    </div>
 
-    <div id="toast" class="toast hidden">
-        <span id="toastMessage"></span>
-    </div>
+        <div id="sectionModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Edit Section</h3>
+                    <button id="closeSectionModal" class="btn btn--outline btn--icon" aria-label="Close Modal">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="sectionName">Section Name</label>
+                        <input type="text" id="sectionName" class="form-control" placeholder="Enter section name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="sectionSubtitle">Subtitle</label>
+                        <input type="text" id="sectionSubtitle" class="form-control" placeholder="Enter subtitle">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="sectionHeadline">Headline</label>
+                        <input type="text" id="sectionHeadline" class="form-control" placeholder="Enter headline">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="sectionParagraphs">Paragraphs</label>
+                        <textarea id="sectionParagraphs" class="form-control" rows="8" placeholder="Enter paragraphs (separate with blank lines)"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="sectionQuote">Quote (optional)</label>
+                        <textarea id="sectionQuote" class="form-control" rows="2" placeholder="Enter an optional quote"></textarea>
+                    </div>
 
-    <div id="sectionModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Edit Section</h3>
-                <button id="closeSectionModal" class="btn btn--outline btn--icon" aria-label="Close Modal">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label" for="sectionName">Section Name</label>
-                    <input type="text" id="sectionName" class="form-control" placeholder="Enter section name">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="sectionSubtitle">Subtitle</label>
-                    <input type="text" id="sectionSubtitle" class="form-control" placeholder="Enter subtitle">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="sectionHeadline">Headline</label>
-                    <input type="text" id="sectionHeadline" class="form-control" placeholder="Enter headline">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="sectionParagraphs">Paragraphs</label>
-                    <textarea id="sectionParagraphs" class="form-control" rows="8" placeholder="Enter paragraphs (separate with blank lines)"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="sectionQuote">Quote (optional)</label>
-                    <textarea id="sectionQuote" class="form-control" rows="2" placeholder="Enter an optional quote"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <h4>Image Settings (Optional)</h4>
-                    <div class="image-settings">
-                        <div class="form-group">
-                            <label class="form-label" for="sectionImageUrl">Image URL</label>
-                            <input type="url" id="sectionImageUrl" class="form-control" placeholder="https://example.com/image.jpg">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="sectionImageAlt">Image Alt Text</label>
-                            <input type="text" id="sectionImageAlt" class="form-control" placeholder="Describe the image for accessibility">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="sectionImagePosition">Image Position</label>
-                            <select id="sectionImagePosition" class="form-control">
-                                <option value="left">Float Left</option>
-                                <option value="right">Float Right</option>
-                                <option value="center">Center Block</option>
-                            </select>
+                    <div class="form-group">
+                        <h4>Image Settings (Optional)</h4>
+                        <div class="image-settings">
+                            <div class="form-group">
+                                <label class="form-label" for="sectionImageUrl">Image URL</label>
+                                <input type="url" id="sectionImageUrl" class="form-control" placeholder="https://example.com/image.jpg">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="sectionImageAlt">Image Alt Text</label>
+                                <input type="text" id="sectionImageAlt" class="form-control" placeholder="Describe the image for accessibility">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="sectionImagePosition">Image Position</label>
+                                <select id="sectionImagePosition" class="form-control">
+                                    <option value="left">Float Left</option>
+                                    <option value="right">Float Right</option>
+                                    <option value="center">Center Block</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button id="cancelSectionBtn" class="btn btn--outline">Cancel</button>
-                <button id="saveSectionBtn" class="btn btn--primary">Save Changes</button>
+                <div class="modal-footer">
+                    <button id="cancelSectionBtn" class="btn btn--outline">Cancel</button>
+                    <button id="saveSectionBtn" class="btn btn--primary">Save Changes</button>
+                </div>
             </div>
         </div>
     </div>
@@ -191,5 +279,42 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
     <script src="app.js"></script>
-</body>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- YOUR PASSWORD IS SET HERE ---
+            const CORRECT_PASSWORD = "Sanrise@123"; 
+            // ---------------------------------
+
+            const overlay = document.getElementById('password-overlay');
+            const mainContent = document.getElementById('main-content');
+            const passwordInput = document.getElementById('password-input');
+            const submitButton = document.getElementById('password-submit');
+            const errorMessage = document.getElementById('error-message');
+
+            function checkPassword() {
+                if (passwordInput.value === CORRECT_PASSWORD) {
+                    // Correct password
+                    overlay.style.display = 'none';
+                    mainContent.classList.remove('hidden');
+                } else {
+                    // Incorrect password
+                    errorMessage.classList.remove('error-hidden');
+                    passwordInput.value = ''; // Clear the input
+                    passwordInput.focus(); // Focus back on the input
+                }
+            }
+
+            // Check password on button click
+            submitButton.addEventListener('click', checkPassword);
+
+            // Check password on pressing "Enter"
+            passwordInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    checkPassword();
+                }
+            });
+        });
+    </script>
+    </body>
 </html>
